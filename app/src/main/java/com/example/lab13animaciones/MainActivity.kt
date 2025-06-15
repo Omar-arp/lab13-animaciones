@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.lab13animaciones.ui.theme.Lab13AnimacionesTheme
+import androidx.compose.ui.unit.IntOffset
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,8 @@ class MainActivity : ComponentActivity() {
                         Ejercicio1AnimatedVisibility()
                         Divider(thickness = 2.dp)
                         Ejercicio2AnimateColor()
+                        Divider(thickness = 2.dp)
+                        Ejercicio3TamañoYPosición()
                     }
                 }
             }
@@ -74,7 +78,7 @@ fun Ejercicio2AnimateColor() {
     var isBlue by remember { mutableStateOf(true) }
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isBlue) Color(0xFF64B5F6) else Color(0xFF4CAF50), // Azul o verde
+        targetValue = if (isBlue) Color(0xFF64B5F6) else Color(0xFF4CAF50),
         animationSpec = tween(durationMillis = 1000), label = "colorAnim"
     )
 
@@ -91,6 +95,43 @@ fun Ejercicio2AnimateColor() {
             modifier = Modifier
                 .size(150.dp)
                 .background(backgroundColor)
+        )
+    }
+}
+
+@Composable
+fun Ejercicio3TamañoYPosición() {
+    var moved by remember { mutableStateOf(false) }
+
+    val size by animateDpAsState(
+        targetValue = if (moved) 100.dp else 150.dp,
+        animationSpec = tween(durationMillis = 600), label = "sizeAnim"
+    )
+
+    val offsetX by animateDpAsState(
+        targetValue = if (moved) 100.dp else 0.dp,
+        animationSpec = tween(durationMillis = 600), label = "offsetXAnim"
+    )
+
+    val offsetY by animateDpAsState(
+        targetValue = if (moved) 100.dp else 0.dp,
+        animationSpec = tween(durationMillis = 600), label = "offsetYAnim"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Ejercicio 3: Tamaño y Posición", style = MaterialTheme.typography.titleMedium)
+        Button(onClick = { moved = !moved }) {
+            Text("Mover y cambiar tamaño")
+        }
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(offsetX.roundToPx(), offsetY.roundToPx()) }
+                .size(size)
+                .background(Color(0xFFBA68C8))
         )
     }
 }
