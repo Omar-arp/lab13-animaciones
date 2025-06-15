@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -23,7 +24,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Ejercicio1AnimatedVisibility()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Ejercicio1AnimatedVisibility()
+                        Divider(thickness = 2.dp)
+                        Ejercicio2AnimateColor()
+                    }
                 }
             }
         }
@@ -36,12 +47,10 @@ fun Ejercicio1AnimatedVisibility() {
     var visible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Text("Ejercicio 1: AnimatedVisibility", style = MaterialTheme.typography.titleMedium)
         Button(onClick = { visible = !visible }) {
             Text(if (visible) "Ocultar cuadro" else "Mostrar cuadro")
         }
@@ -54,8 +63,34 @@ fun Ejercicio1AnimatedVisibility() {
             Box(
                 modifier = Modifier
                     .size(150.dp)
-                    .background(Color(0xFF81C784)) // Verde claro
+                    .background(Color(0xFF81C784))
             )
         }
+    }
+}
+
+@Composable
+fun Ejercicio2AnimateColor() {
+    var isBlue by remember { mutableStateOf(true) }
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isBlue) Color(0xFF64B5F6) else Color(0xFF4CAF50), // Azul o verde
+        animationSpec = tween(durationMillis = 1000), label = "colorAnim"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Ejercicio 2: animateColorAsState", style = MaterialTheme.typography.titleMedium)
+        Button(onClick = { isBlue = !isBlue }) {
+            Text("Cambiar color")
+        }
+
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .background(backgroundColor)
+        )
     }
 }
