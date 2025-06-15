@@ -8,14 +8,16 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.lab13animaciones.ui.theme.Lab13AnimacionesTheme
 import androidx.compose.ui.unit.IntOffset
+import com.example.lab13animaciones.ui.theme.Lab13AnimacionesTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,9 +28,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val scrollState = rememberScrollState()
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
+                            .verticalScroll(scrollState)
                             .padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -38,6 +42,8 @@ class MainActivity : ComponentActivity() {
                         Ejercicio2AnimateColor()
                         Divider(thickness = 2.dp)
                         Ejercicio3TamañoYPosición()
+                        Divider(thickness = 2.dp)
+                        Ejercicio4AnimatedContent()
                     }
                 }
             }
@@ -133,5 +139,42 @@ fun Ejercicio3TamañoYPosición() {
                 .size(size)
                 .background(Color(0xFFBA68C8))
         )
+    }
+}
+
+enum class Estado { Cargando, Contenido, Error }
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun Ejercicio4AnimatedContent() {
+
+
+    var estadoActual by remember { mutableStateOf(Estado.Cargando) }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Ejercicio 4: AnimatedContent", style = MaterialTheme.typography.titleMedium)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { estadoActual = Estado.Cargando }) { Text("Cargando") }
+            Button(onClick = { estadoActual = Estado.Contenido }) { Text("Contenido") }
+            Button(onClick = { estadoActual = Estado.Error }) { Text("Error") }
+        }
+
+        AnimatedContent(
+            targetState = estadoActual,
+            transitionSpec = {
+                fadeIn(tween(500)) with fadeOut(tween(500))
+            },
+            label = "estadoAnimado"
+        ) { estado ->
+            when (estado) {
+                Estado.Cargando -> Text("Cargando...", color = Color.Gray)
+                Estado.Contenido -> Text("¡Contenido cargado correctamente!", color = Color.Green)
+                Estado.Error -> Text("Error al cargar el contenido.", color = Color.Red)
+            }
+        }
     }
 }
